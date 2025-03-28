@@ -1,0 +1,1005 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Control</title>
+    <style>
+        :root {
+            --primary: #6200ee;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --error: #b00020;
+            --on-primary: #ffffff;
+            --on-secondary: #000000;
+            --on-background: #000000;
+            --on-surface: #000000;
+            --on-error: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary: #bb86fc;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --error: #cf6679;
+            --on-primary: #000000;
+            --on-secondary: #000000;
+            --on-background: #ffffff;
+            --on-surface: #ffffff;
+            --on-error: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--on-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 8px;
+            background-color: var(--surface);
+            color: var(--on-surface);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(98, 0, 238, 0.1);
+        }
+
+        .time-slider {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .time-slider input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .time-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .theme-switch {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tag-remove {
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Notification Control</h1>
+        
+        <div class="section">
+            <div class="toggle-container">
+                <div>
+                    <div class="section-title">
+                        <i class="material-icons">notifications_off</i>
+                        <span>Do Not Disturb</span>
+                    </div>
+                    <p style="font-size: 14px; color: #666;">Block all notifications except priority contacts</p>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="dndToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">schedule</i>
+                <span>Schedule</span>
+            </div>
+            <div class="time-slider">
+                <input type="range" min="0" max="1440" step="15" id="startTime" value="1320">
+                <input type="range" min="0" max="1440" step="15" id="endTime" value="360">
+                <div class="time-display">
+                    <span id="startTimeDisplay">10:00 PM</span>
+                    <span id="endTimeDisplay">6:00 AM</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">star</i>
+                <span>Priority Contacts</span>
+            </div>
+            <input type="text" class="input-field" id="priorityInput" placeholder="Add priority contact (name or number)">
+            <button class="btn-secondary" id="addPriorityBtn">Add</button>
+            <div class="tag-container" id="priorityTags"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">check_circle</i>
+                <span>Whitelist Contacts</span>
+            </div>
+            <input type="text" class="input-field" id="whitelistInput" placeholder="Add whitelisted contact (name or number)">
+            <button class="btn-secondary" id="addWhitelistBtn">Add</button>
+            <div class="tag-container" id="whitelistTags"></div>
+        </div>
+        
+        <button class="btn" id="saveBtn">Save Settings</button>
+    </div>
+    
+    <button class="theme-switch" id="themeSwitch">
+        <i class="material-icons" id="themeIcon">brightness_4</i>
+    </button>
+
+    <script>
+        // Theme switcher
+        const themeSwitch = document.getElementById('themeSwitch');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        themeSwitch.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                themeIcon.textContent = 'brightness_4';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = 'brightness_7';
+            }
+        });
+
+        // Time slider functionality
+        const startTimeSlider = document.getElementById('startTime');
+        const endTimeSlider = document.getElementById('endTime');
+        const startTimeDisplay = document.getElementById('startTimeDisplay');
+        const endTimeDisplay = document.getElementById('endTimeDisplay');
+
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${mins.toString().padStart(2, '0')} ${ampm}`;
+        }
+
+        function updateTimeDisplays() {
+            startTimeDisplay.textContent = formatTime(parseInt(startTimeSlider.value));
+            endTimeDisplay.textContent = formatTime(parseInt(endTimeSlider.value));
+        }
+
+        startTimeSlider.addEventListener('input', updateTimeDisplays);
+        endTimeSlider.addEventListener('input', updateTimeDisplays);
+        updateTimeDisplays();
+
+        // Tag functionality for priority and whitelist contacts
+        const priorityInput = document.getElementById('priorityInput');
+        const addPriorityBtn = document.getElementById('addPriorityBtn');
+        const priorityTags = document.getElementById('priorityTags');
+        
+        const whitelistInput = document.getElementById('whitelistInput');
+        const addWhitelistBtn = document.getElementById('addWhitelistBtn');
+        const whitelistTags = document.getElementById('whitelistTags');
+
+        function createTag(text, container) {
+            if (!text.trim()) return;
+            
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                ${text}
+                <span class="tag-remove material-icons">close</span>
+            `;
+            
+            const removeBtn = tag.querySelector('.tag-remove');
+            removeBtn.addEventListener('click', () => {
+                tag.remove();
+            });
+            
+            container.appendChild(tag);
+        }
+
+        addPriorityBtn.addEventListener('click', () => {
+            createTag(priorityInput.value, priorityTags);
+            priorityInput.value = '';
+        });
+
+        priorityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createTag(priorityInput.value, priorityTags);
+                priorityInput.value = '';
+            }
+        });
+
+        addWhitelistBtn.addEventListener('click', () => {
+            createTag(whitelistInput.value, whitelistTags);
+            whitelistInput.value = '';
+        });
+
+        whitelistInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createTag(whitelistInput.value, whitelistTags);
+                whitelistInput.value = '';
+            }
+        });
+
+        // Save functionality
+        const saveBtn = document.getElementById('saveBtn');
+        const dndToggle = document.getElementById('dndToggle');
+        
+        saveBtn.addEventListener('click', () => {
+            const settings = {
+                dndEnabled: dndToggle.checked,
+                schedule: {
+                    start: parseInt(startTimeSlider.value),
+                    end: parseInt(endTimeSlider.value)
+                },
+                priorityContacts: Array.from(priorityTags.children).map(tag => 
+                    tag.textContent.trim().replace('close', '').trim()
+                ),
+                whitelistContacts: Array.from(whitelistTags.children).map(tag => 
+                    tag.textContent.trim().replace('close', '').trim()
+                ),
+                theme: document.documentElement.getAttribute('data-theme') || 'light'
+            };
+            
+            // In a real app, you would save this to localStorage or send to a server
+            console.log('Settings saved:', settings);
+            alert('Settings saved successfully!');
+        });
+
+        // Load saved settings (mock for demo)
+        function loadSettings() {
+            // In a real app, you would load from localStorage or a server
+            const mockSettings = {
+                dndEnabled: false,
+                schedule: {
+                    start: 1320, // 10:00 PM
+                    end: 360    // 6:00 AM
+                },
+                priorityContacts: ['Mom', 'Work'],
+                whitelistContacts: ['Spouse', 'Boss'],
+                theme: 'light'
+            };
+            
+            dndToggle.checked = mockSettings.dndEnabled;
+            startTimeSlider.value = mockSettings.schedule.start;
+            endTimeSlider.value = mockSettings.schedule.end;
+            updateTimeDisplays();
+            
+            mockSettings.priorityContacts.forEach(contact => {
+                createTag(contact, priorityTags);
+            });
+            
+            mockSettings.whitelistContacts.forEach(contact => {
+                createTag(contact, whitelistTags);
+            });
+            
+            if (mockSettings.theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = 'brightness_7';
+            }
+        }
+        
+        // Load settings when page loads
+        window.addEventListener('DOMContentLoaded', loadSettings);
+    </script>
+</body>
+</html> -->
+<!-- ================== -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Control</title>
+    <style>
+        :root {
+            --primary: #6200ee;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --error: #b00020;
+            --on-primary: #ffffff;
+            --on-secondary: #000000;
+            --on-background: #000000;
+            --on-surface: #000000;
+            --on-error: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary: #bb86fc;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --error: #cf6679;
+            --on-primary: #000000;
+            --on-secondary: #000000;
+            --on-background: #ffffff;
+            --on-surface: #ffffff;
+            --on-error: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--on-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 8px;
+            background-color: var(--surface);
+            color: var(--on-surface);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Enhanced Add Button Styling */
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .input-group .input-field {
+            margin-bottom: 0;
+            flex: 1;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 48px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            min-width: 80px;
+            padding: 0 16px;
+        }
+
+        .btn-add i {
+            margin-right: 8px;
+        }
+
+        .btn-save {
+            width: 100%;
+            margin-top: 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .time-slider {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .time-slider input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .time-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .theme-switch {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-remove {
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Notification Control</h1>
+        
+        <div class="section">
+            <div class="toggle-container">
+                <div>
+                    <div class="section-title">
+                        <i class="material-icons">notifications_off</i>
+                        <span>Do Not Disturb</span>
+                    </div>
+                    <p style="font-size: 14px; color: #666;">Block all notifications except priority contacts</p>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="dndToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">schedule</i>
+                <span>Schedule</span>
+            </div>
+            <div class="time-slider">
+                <input type="range" min="0" max="1440" step="15" id="startTime" value="1320">
+                <input type="range" min="0" max="1440" step="15" id="endTime" value="360">
+                <div class="time-display">
+                    <span id="startTimeDisplay">10:00 PM</span>
+                    <span id="endTimeDisplay">6:00 AM</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">star</i>
+                <span>Priority Contacts</span>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="priorityInput" placeholder="Add priority contact (name or number)">
+                <button class="btn btn-add" id="addPriorityBtn">
+                    <i class="material-icons">add</i>
+                    <span>Add</span>
+                </button>
+            </div>
+            <div class="tag-container" id="priorityTags"></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">
+                <i class="material-icons">check_circle</i>
+                <span>Whitelist Contacts</span>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="whitelistInput" placeholder="Add whitelisted contact (name or number)">
+                <button class="btn btn-add" id="addWhitelistBtn">
+                    <i class="material-icons">add</i>
+                    <span>Add</span>
+                </button>
+            </div>
+            <div class="tag-container" id="whitelistTags"></div>
+        </div>
+        
+        <button class="btn btn-save" id="saveBtn">
+            <i class="material-icons">save</i>
+            <span>Save Settings</span>
+        </button>
+    </div>
+    
+    <button class="theme-switch" id="themeSwitch">
+        <i class="material-icons" id="themeIcon">brightness_4</i>
+    </button>
+
+    <script>
+        // Theme switcher
+        const themeSwitch = document.getElementById('themeSwitch');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        themeSwitch.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                themeIcon.textContent = 'brightness_4';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = 'brightness_7';
+            }
+        });
+
+        // Time slider functionality
+        const startTimeSlider = document.getElementById('startTime');
+        const endTimeSlider = document.getElementById('endTime');
+        const startTimeDisplay = document.getElementById('startTimeDisplay');
+        const endTimeDisplay = document.getElementById('endTimeDisplay');
+
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${mins.toString().padStart(2, '0')} ${ampm}`;
+        }
+
+        function updateTimeDisplays() {
+            startTimeDisplay.textContent = formatTime(parseInt(startTimeSlider.value));
+            endTimeDisplay.textContent = formatTime(parseInt(endTimeSlider.value));
+        }
+
+        startTimeSlider.addEventListener('input', updateTimeDisplays);
+        endTimeSlider.addEventListener('input', updateTimeDisplays);
+        updateTimeDisplays();
+
+        // Tag functionality for priority and whitelist contacts
+        const priorityInput = document.getElementById('priorityInput');
+        const addPriorityBtn = document.getElementById('addPriorityBtn');
+        const priorityTags = document.getElementById('priorityTags');
+        
+        const whitelistInput = document.getElementById('whitelistInput');
+        const addWhitelistBtn = document.getElementById('addWhitelistBtn');
+        const whitelistTags = document.getElementById('whitelistTags');
+
+        function createTag(text, container) {
+            if (!text.trim()) return;
+            
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                ${text}
+                <span class="tag-remove material-icons">close</span>
+            `;
+            
+            const removeBtn = tag.querySelector('.tag-remove');
+            removeBtn.addEventListener('click', () => {
+                tag.remove();
+            });
+            
+            container.appendChild(tag);
+        }
+
+        addPriorityBtn.addEventListener('click', () => {
+            createTag(priorityInput.value, priorityTags);
+            priorityInput.value = '';
+            priorityInput.focus();
+        });
+
+        priorityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createTag(priorityInput.value, priorityTags);
+                priorityInput.value = '';
+            }
+        });
+
+        addWhitelistBtn.addEventListener('click', () => {
+            createTag(whitelistInput.value, whitelistTags);
+            whitelistInput.value = '';
+            whitelistInput.focus();
+        });
+
+        whitelistInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createTag(whitelistInput.value, whitelistTags);
+                whitelistInput.value = '';
+            }
+        });
+
+        // Save functionality
+        const saveBtn = document.getElementById('saveBtn');
+        const dndToggle = document.getElementById('dndToggle');
+        
+        saveBtn.addEventListener('click', () => {
+            const settings = {
+                dndEnabled: dndToggle.checked,
+                schedule: {
+                    start: parseInt(startTimeSlider.value),
+                    end: parseInt(endTimeSlider.value)
+                },
+                priorityContacts: Array.from(priorityTags.children).map(tag => 
+                    tag.textContent.trim().replace('close', '').trim()
+                ),
+                whitelistContacts: Array.from(whitelistTags.children).map(tag => 
+                    tag.textContent.trim().replace('close', '').trim()
+                ),
+                theme: document.documentElement.getAttribute('data-theme') || 'light'
+            };
+            
+            // In a real app, you would save this to localStorage or send to a server
+            console.log('Settings saved:', settings);
+            alert('Settings saved successfully!');
+        });
+
+        // Load saved settings (mock for demo)
+        function loadSettings() {
+            // In a real app, you would load from localStorage or a server
+            const mockSettings = {
+                dndEnabled: false,
+                schedule: {
+                    start: 1320, // 10:00 PM
+                    end: 360    // 6:00 AM
+                },
+                priorityContacts: ['Mom', 'Work'],
+                whitelistContacts: ['Spouse', 'Boss'],
+                theme: 'light'
+            };
+            
+            dndToggle.checked = mockSettings.dndEnabled;
+            startTimeSlider.value = mockSettings.schedule.start;
+            endTimeSlider.value = mockSettings.schedule.end;
+            updateTimeDisplays();
+            
+            mockSettings.priorityContacts.forEach(contact => {
+                createTag(contact, priorityTags);
+            });
+            
+            mockSettings.whitelistContacts.forEach(contact => {
+                createTag(contact, whitelistTags);
+            });
+            
+            if (mockSettings.theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = 'brightness_7';
+            }
+        }
+        
+        // Load settings when page loads
+        window.addEventListener('DOMContentLoaded', loadSettings);
+    </script>
+</body>
+</html>
